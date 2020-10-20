@@ -1,0 +1,32 @@
+version: '3'
+services:
+  hk-nginx:
+   container_name: hk-nginx
+   image: nginx:1.13
+   restart: always
+   ports:
+   - 80:80
+   - 443:443
+   volumes:
+   - ./nginx/conf.d:/etc/nginx/conf.d
+   depends_on:
+   - app
+   networks:
+      - app-network
+
+  app:
+    build: ~/demo
+    working_dir: /demo
+    volumes:
+      - ~/demo:/demo
+      - ~/.m2:/root/.m2
+    expose:
+      - 8080
+    command: mvn clean spring-boot:run
+    networks:
+      - app-network
+
+#Docker Networks
+networks:
+  app-network:
+    driver: bridge
